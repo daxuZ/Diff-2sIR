@@ -5,6 +5,7 @@
 ## 1. 环境准备
   - Ubuntu 22.04 LTS
   - Python 3.10
+
 **pip install**
 
         pip install requirements.txt
