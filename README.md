@@ -7,7 +7,7 @@
   - Python 3.10
 **pip install**
 
-pip install requirements.txt
+    pip install requirements.txt
 
 ## 2. 文件准备
 
