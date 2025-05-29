@@ -25,4 +25,4 @@
 
 下载  [权重文件和CelebA-HQ](https://pan.baidu.com/s/1LTjlCdN7Gc64nn6n87KRhw?pwd=daxu) 数据集、[掩码](https://mycuhk-my.sharepoint.com/:f:/g/personal/1155137927_link_cuhk_edu_hk/EuY30ziF-G5BvwziuHNFzDkBVC6KBPRg69kCeHIu-BXORA?e=7OwJyE) 数据集(来源于 [MAT](https://github.com/fenglinglwb/MAT) )
 
-将权重文件放置到 ./experiments/checkpoint 目录下
+将权重文件放置到 ./experiments/checkpoint 目录下，准备测试使用的 .flist 文件
