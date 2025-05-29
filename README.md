@@ -3,4 +3,4 @@
 
 ## 1. 数据集准备
 
-下载 [CelebA-HQ](https://pan.baidu.com/s/1bgxwq9Xpx5HBx76d_wGKvw?pwd=daxu) 数据集
+**下载**  [CelebA-HQ](https://pan.baidu.com/s/1bgxwq9Xpx5HBx76d_wGKvw?pwd=daxu) 数据集、[掩码]() 数据集
