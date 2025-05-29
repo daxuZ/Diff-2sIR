@@ -1,0 +1,244 @@
+{
+    "name": "inpainting_celebahq",
+    "gpu_ids": [
+        0
+    ],
+    "seed": -1,
+    "finetune_norm": false,
+    "use_v": false,
+    "debug1": false,
+    "path": {
+        "base_dir": "/home/featurize/work/palette/experiments",
+        "code": "code",
+        "tb_logger": "tb_logger",
+        "results": "results",
+        "checkpoint": "checkpoint",
+        "resume_state": "/home/featurize/work/palette/Palette-Image-to-Image-Diffusion-Model/experiments/checkpoint/celebahq_mamba_200/200"
+    },
+    "datasets": {
+        "train": {
+            "which_dataset": {
+                "name": [
+                    "data.dataset",
+                    "InpaintDataset"
+                ],
+                "args": {
+                    "data_root": "/home/featurize/work/palette/Palette-Image-to-Image-Diffusion-Model/celebahq_mat_train.flist",
+                    "data_len": -1,
+                    "mask_config": {
+                        "mask_mode": "mat_large"
+                    }
+                }
+            },
+            "dataloader": {
+                "validation_split": 2,
+                "args": {
+                    "batch_size": 3,
+                    "num_workers": 4,
+                    "shuffle": true,
+                    "pin_memory": true,
+                    "drop_last": true
+                },
+                "val_args": {
+                    "batch_size": 1,
+                    "num_workers": 4,
+                    "shuffle": false,
+                    "pin_memory": true,
+                    "drop_last": false
+                }
+            }
+        },
+        "debug": {
+            "which_dataset": {
+                "name": "InpaintDataset",
+                "args": {
+                    "data_root": "/media/daxu/diskd/Users/Administrator/Pycharm/Palette-Image-to-Image-Diffusion-Model/datasets/celebahq/flist/debug_500.flist",
+                    "mask_config": {
+                        "mask_mode": "center"
+                    }
+                }
+            },
+            "dataloader": {
+                "args": {
+                    "batch_size": 8,
+                    "num_workers": 4,
+                    "pin_memory": true
+                }
+            }
+        },
+        "test": {
+            "which_dataset": {
+                "name": "InpaintDataset",
+                "args": {
+                    "data_root": "/home/featurize/work/palette/Palette-Image-to-Image-Diffusion-Model/celebahq_mat_test.flist",
+                    "mask_config": {
+                        "mask_mode": "center"
+                    }
+                }
+            },
+            "dataloader": {
+                "args": {
+                    "batch_size": 8,
+                    "num_workers": 4,
+                    "pin_memory": true
+                }
+            }
+        }
+    },
+    "model": {
+        "which_model": {
+            "name": [
+                "models.model",
+                "Palette"
+            ],
+            "args": {
+                "sample_num": 8,
+                "task": "inpainting",
+                "ema_scheduler": {
+                    "ema_start": 1,
+                    "ema_iter": 1,
+                    "ema_decay": 0.9999
+                },
+                "optimizers": [
+                    {
+                        "lr": 5e-05,
+                        "weight_decay": 0
+                    }
+                ]
+            }
+        },
+        "which_networks": [
+            {
+                "name": [
+                    "models.network",
+                    "Network"
+                ],
+                "args": {
+                    "init_type": "kaiming",
+                    "module_name": "mamba_unet",
+                    "v_out": false,
+                    "ddim": false,
+                    "sample_use": "",
+                    "add_noise_t": null,
+                    "repaint_opt": {
+                        "t_T": 250,
+                        "n_sample": 1,
+                        "jump_length": 10,
+                        "jump_n_sample": 10,
+                        "respace_section_counts": "250"
+                    },
+                    "ddnm_opt": {
+                        "T_sampling": 100,
+                        "travel_length": 1,
+                        "travel_repeat": 1,
+                        "eta": 0.0,
+                        "sigma_y": 0.0
+                    },
+                    "ddim_opt": {
+                        "skip": 10,
+                        "skip_type": "uniform",
+                        "timesteps": 100,
+                        "eta": 0.0
+                    },
+                    "unet": {
+                        "in_channel": 6,
+                        "out_channel": 3,
+                        "inner_channel": 64,
+                        "channel_mults": [
+                            1,
+                            2,
+                            4,
+                            8
+                        ],
+                        "attn_res": [
+                            16
+                        ],
+                        "num_head_channels": 32,
+                        "res_blocks": 2,
+                        "dropout": 0.2,
+                        "image_size": 256
+                    },
+                    "beta_schedule": {
+                        "train": {
+                            "schedule": "linear",
+                            "n_timestep": 2000,
+                            "linear_start": 1e-06,
+                            "linear_end": 0.01
+                        },
+                        "test": {
+                            "schedule": "linear",
+                            "n_timestep": 1000,
+                            "linear_start": 0.0001,
+                            "linear_end": 0.09
+                        }
+                    }
+                }
+            }
+        ],
+        "v_networks": [
+            {
+                "name": [
+                    "models.v_network",
+                    "Network"
+                ],
+                "args": {
+                    "init_type": "kaiming",
+                    "module_name": "guided_diffusion",
+                    "v_out": false,
+                    "unet": {
+                        "in_channel": 6,
+                        "out_channel": 3,
+                        "inner_channel": 64,
+                        "channel_mults": [
+                            1,
+                            2,
+                            4,
+                            8
+                        ],
+                        "attn_res": [
+                            16
+                        ],
+                        "num_head_channels": 32,
+                        "res_blocks": 2,
+                        "dropout": 0.2,
+                        "image_size": 256
+                    },
+                    "beta_schedule": {
+                        "train": {
+                            "schedule": "velocity",
+                            "n_timestep": 2000,
+                            "linear_start": 1e-06,
+                            "linear_end": 0.01
+                        },
+                        "test": {
+                            "schedule": "linear",
+                            "n_timestep": 500,
+                            "linear_start": 0.0001,
+                            "linear_end": 0.09
+                        }
+                    }
+                }
+            }
+        ],
+        "which_losses": [
+            "mse_loss"
+        ],
+        "which_metrics": [
+            "mae"
+        ]
+    },
+    "train": {
+        "n_epoch": 300,
+        "n_iter": 100000000.0,
+        "val_epoch": 5,
+        "save_checkpoint_epoch": 5,
+        "log_iter": 100.0,
+        "tensorboard": true
+    },
+    "debug": {
+        "val_epoch": 2,
+        "save_checkpoint_epoch": 4,
+        "log_iter": 2,
+        "debug_split": 50
+    }
+}

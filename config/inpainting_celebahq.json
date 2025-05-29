@@ -1,0 +1,239 @@
+{
+    "name": "inpainting_celebahq",
+    "gpu_ids": [0],
+    "seed" : 0,
+    "finetune_norm": false,
+    "use_v": false,
+    "debug1": true,
+    "path": {
+        "base_dir": "experiments",
+        "code": "code",
+        "tb_logger": "tb_logger",
+        "results": "results",
+        "checkpoint": "checkpoint",
+        "resume_state": "E:\\Pycharm\\Palette_Windows\\experiments\\checkpoint\\415",
+//        "resume_state": "E:\\Pycharm\\Palette_Windows\\experiments\\checkpoint\\455",
+        "resume_state_v": null
+    },
+    "datasets": {
+        "train": {
+            "which_dataset": {
+                "name": ["data.dataset", "InpaintDataset"],
+                "args":{
+                    "data_root": "E:\\Pycharm\\Palette_Windows\\datasets\\celebahq_mat\\train_png_windows.flist",
+                    "data_len": -1,
+                    "mask_config": {
+                        "mask_mode": "mat_large"
+                    }
+                } 
+            },
+            "dataloader":{
+                "validation_split": 2,
+                "args":{
+                    "batch_size": 3,
+                    "num_workers": 4,
+                    "shuffle": true,
+                    "pin_memory": true,
+                    "drop_last": true
+                },
+                "val_args":{
+                    "batch_size": 8,
+                    "num_workers": 4,
+                    "shuffle": false,
+                    "pin_memory": true,
+                    "drop_last": false
+                }
+            }
+        },
+        "debug": {
+            "which_dataset": {
+                "name": "InpaintDataset",
+                "args":{
+//                    "data_root": "E:\\Pycharm\\Palette_Windows\\datasets\\celebahq_mat\\mat_small_windows.flist",
+                    "data_root": "E:\\Pycharm\\Palette_Windows\\datasets\\paper_use\\DDNM_small_windows.flist",
+                    "mask_config": {
+                        "mask_mode": "file",
+                        "mask_path": "E:\\Pycharm\\Palette_Windows\\datasets\\celebahq_masks_256_small"
+                    }
+                }
+            },
+            "dataloader":{
+                "args":{
+                    "batch_size": 8,
+                    "num_workers": 4,
+                    "pin_memory": true
+                }
+            }
+        },
+        "test": { 
+            "which_dataset": {
+                "name": "InpaintDataset",
+                "args":{
+                    "data_root": "E:\\Pycharm\\Palette_Windows\\datasets\\celebahq_mat\\val_celebahq_png_windows.flist",
+//                    "data_root": "E:\\Pycharm\\Palette_Windows\\datasets\\celebahq_mat\\val_celebahq_png_windows.flist",
+                    "mask_config": {
+                        "mask_mode": "file",
+                        "mask_path": "E:\\Pycharm\\Palette_Windows\\datasets\\celebahq_masks_256_small"
+                    }
+                }
+            },
+            "dataloader":{
+                "args":{
+                    "batch_size": 8,
+                    "num_workers": 4,
+                    "pin_memory": true
+                }
+            }
+        }
+    },
+
+    "model": {
+        "which_model": {
+            "name": ["models.model", "Palette"],
+            "args": {
+                "sample_num": 8,
+                "task": "inpainting",
+                "ema_scheduler": {
+                    "ema_start": 1,
+                    "ema_iter": 1,
+                    "ema_decay": 0.9999
+                },
+                "optimizers": [
+                    {
+                        "lr": 5e-5,
+                        "weight_decay": 0}
+                ]
+            }
+        }, 
+        "which_networks": [
+            {
+                "name": ["models.network", "Network"],
+                "args": {
+                    "init_type": "kaiming",
+                    "module_name": "guided_diffusion",  // guided_diffusion   res_unet
+                    "v_out": false,
+                    "ddim": false,
+                    "sample_use": "ddim",
+                    "add_noise_t": 200,
+                    "repaint_opt": {
+                        "t_T": 250,
+                        "n_sample": 1,
+                        "jump_length": 10,
+                        "jump_n_sample": 10,
+                        "respace_section_counts": "250"
+                    },
+                    "ddnm_opt": {
+                        "T_sampling": 100,
+                        "travel_length": 1,
+                        "travel_repeat": 1,
+                        "eta": 0.0,
+                        "sigma_y": 0.0
+                    },
+                    "ddim_opt": {
+                        "skip": 10,
+                        "skip_type": "uniform",
+                        "timesteps": 100,
+                        "eta": 0.0,
+                        "use_middle_ddim": true
+                    },
+                    "unet": {
+                        "in_channel": 6,
+                        "out_channel": 3,
+                        "inner_channel": 64,
+                        "channel_mults": [
+                            1,
+                            2,
+                            4,
+                            8
+                        ],
+                        "attn_res": [
+                            16
+                        ],
+                        "num_head_channels": 32,
+                        "res_blocks": 2,
+                        "dropout": 0.2,
+                        "image_size": 256
+                    },
+                    "beta_schedule": {
+                        "train": {
+                            "schedule": "linear",
+                            "n_timestep": 2000,
+                            "linear_start": 1e-6,
+                            "linear_end": 0.01
+                        },
+                        "test": {
+                            "schedule": "linear",
+                            "n_timestep": 1000,
+                            "linear_start": 1e-6,
+                            "linear_end": 0.01
+                        }
+                    }
+                }
+            }
+        ],
+        "v_networks": [
+            {
+                "name": ["models.v_network", "Network"],
+                "args": {
+                    "init_type": "kaiming",
+                    "module_name": "guided_diffusion",
+                    "v_out": false,
+                    "unet": {
+                        "in_channel": 6,
+                        "out_channel": 3,
+                        "inner_channel": 64,
+                        "channel_mults": [
+                            1,
+                            2,
+                            4,
+                            8
+                        ],
+                        "attn_res": [
+                            16
+                        ],
+                        "num_head_channels": 32,
+                        "res_blocks": 2,
+                        "dropout": 0.2,
+                        "image_size": 256
+                    },
+                    "beta_schedule": {
+                        "train": {
+                            "schedule": "velocity",
+                            "n_timestep": 2000,
+                            "linear_start": 1e-6,
+                            "linear_end": 0.01
+                        },
+                        "test": {
+                            "schedule": "linear",
+                            "n_timestep": 1000,
+                            "linear_start": 1e-4,
+                            "linear_end": 0.09
+                        }
+                    }
+                }
+            }
+        ],
+        "which_losses": [
+            "mse_loss"
+        ],
+        "which_metrics": [
+            "mae"
+        ]
+    },
+
+    "train": {
+        "n_epoch": 3000,
+        "n_iter": 1e8,
+        "val_epoch": 5,
+        "save_checkpoint_epoch": 5,
+        "log_iter": 1e3,
+        "tensorboard" : true
+    },
+    
+    "debug": {
+        "val_epoch": 2,
+        "save_checkpoint_epoch": 4,
+        "log_iter": 2,
+        "debug_split": 50
+    }
+}
