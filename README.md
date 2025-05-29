@@ -23,4 +23,4 @@
 
 ## 2. 文件准备
 
-**下载**  [CelebA-HQ](https://pan.baidu.com/s/1bgxwq9Xpx5HBx76d_wGKvw?pwd=daxu) 数据集、[掩码]() 数据集
+下载  [权重文件和CelebA-HQ](https://pan.baidu.com/s/1LTjlCdN7Gc64nn6n87KRhw?pwd=daxu) 数据集、[掩码](https://mycuhk-my.sharepoint.com/:f:/g/personal/1155137927_link_cuhk_edu_hk/EuY30ziF-G5BvwziuHNFzDkBVC6KBPRg69kCeHIu-BXORA?e=7OwJyE) 数据集(来源于 [MAT](https://github.com/fenglinglwb/MAT) )
