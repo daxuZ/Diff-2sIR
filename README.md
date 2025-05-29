@@ -3,11 +3,23 @@
 ![](imgs/img1.png)
 
 ## 1. 环境准备
+
   - Ubuntu 22.04 LTS
   - Python 3.10
 
+1) 克隆仓库
+    ```shell
+    git clone https://github.com/daxuZ/Diff-2sIR.git
+    ```
+    
+2) 创建环境
+   ```shell
+   conda create -n diff_2sir python=3.10
+   ```
 
-        pip install -r requirements.txt
+   ```shell
+   pip install -r requirements.txt
+   ```
 
 ## 2. 文件准备
 
