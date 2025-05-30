@@ -57,5 +57,9 @@
 
     ...
 
-    
+## 3. 修改配置文件 inpainting_celebahq_test.json
+
+
+
+
     
